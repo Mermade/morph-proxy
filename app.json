@@ -19,7 +19,8 @@
     },
     "QUERY": {
       "description": "To limit to just this query",
-      "value": ""
+      "value": "",
+	  "required": false
     }
   }
 }
