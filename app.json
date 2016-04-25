@@ -3,5 +3,23 @@
   "description": "A proxy and proxy-generator for the Morph.io API",
   "repository": "https://github.com/mermade/morph-proxy",
   "logo": "https://morph-proxy.herokuapp.com/logo.png",
-  "keywords": ["morph", "morph.io", "node", "proxy", "API"]
+  "keywords": ["morph", "morph.io", "node", "proxy", "API"],
+  "env": {
+    "OWNER": {
+      "description": "The owner of the Morph.io scraper",
+      "value": ""
+    },
+    "SCRAPER": {
+      "description": "The name of the Morph.io scraper",
+      "value": ""
+    },
+    "KEY": {
+      "description": "The API key of the Morph.io scraper",
+      "value": ""
+    },
+    "QUERY": {
+      "description": "To limit to just this query",
+      "value": ""
+    }
+  }
 }

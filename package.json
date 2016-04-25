@@ -14,5 +14,8 @@
     "scraper"
   ],
   "author": "Mike Ralphson",
-  "license": "ISC"
+  "license": "ISC",
+   "dependencies": {
+    "express": "^4.13.3"
+  }
 }
