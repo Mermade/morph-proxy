@@ -12,8 +12,13 @@ It can be deployed to Heroku with one click:
 
 If you specify a `QUERY` environment variable in the Heroku setup, only this query will be available, regardless of what is sent in the query URL parameter.
 
-Once running, you can replace `api.morph.io` with your Heroku app's URL and issue queries without the need to specify your API key. Only the scraper identified by the `OWNER` and `SCRAPER` environment variables can be accessed regardless of the path passed to the proxy.
-If you specify a FORMAT environment variable, only this format will be returned by the proxy, ignoring the extension given in the query URL.
+Once running, you can replace `api.morph.io` with your Heroku app's URL and issue queries without the need to specify your API key. Only
+the scraper identified by the `OWNER` and `SCRAPER` environment variables can be accessed regardless of the path passed to the proxy, which
+should still be of the form `/{ignored}/{ignored}/data.{format}`.
+
+Accessing the root path (`/`) of the running proxy will redirect to this project's GitHub page.
+
+If you specify a `FORMAT` environment variable, only this format will be returned by the proxy, ignoring the extension given in the query URL.
 
 # Canned queries
 

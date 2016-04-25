@@ -54,6 +54,10 @@ app.get('/*.html', function (req, res) {
 app.get('/favicon.ico', function(req, res) {
 	res.sendFile(__dirname+'/pub/images/favicon.ico');
 });
+app.get('/logo.png', function(req, res) {
+	res.sendFile(__dirname+'/pub/images/logo.png');
+});
+
 app.get('/browserconfig.xml', function(req,res) {
 	res.send('<?xml version="1.0" encoding="utf-8"?><browserconfig><msapplication></msapplication></browserconfig>');
 });
