@@ -3,6 +3,18 @@ var https = require('https');
 var express = require('express');
 var app = express();
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+};
+
+function pushAt(arr,index,value) {
+	while (arr.length<index) {
+		arr.push(null);
+	}
+	arr[index] = value;
+}
+
 function getResponse(options, onResult) {
 	var prot = options.port == 443 ? https : http;
 	options.headers.Connection = 'keep-alive';
@@ -50,8 +62,29 @@ app.get('/:owner/:scraper/data.:format', function (req, res) {
 	var owner = process.env.OWNER ? process.env.OWNER : req.params.owner;
 	var scraper = process.env.SCRAPER ? process.env.SCRAPER : req.params.scraper;
 	var format = process.env.FORMAT ? process.env.FORMAT : (req.params.format ? req.params.format : 'json');
-	var query = process.env.QUERY ? process.env.QUERY : (req.query.query ? req.query.query : 'SELECT "true" as working');
 	var key = process.env.KEY ? process.env.KEY : req.query.key;
+	var query = process.env.QUERY ? process.env.QUERY : (req.query.query ? req.query.query : 'SELECT "true" AS working');
+
+	if (query.startsWith('QUERY')) {
+		query = process.env[query] ? process.env[query] : 'SELECT "false" AS queryfound';
+		var rp = [];
+		for (var q in req.query) {
+			if (q.startsWith('!')) {
+				var qid = parseInt(q.replace('!',''),10);
+				if (!isNaN(qid)) {
+					var value = req.query[q];
+					// sanitise
+					value = value.replaceAll('"','\\"');
+					value = value.replaceAll("'","\\'");
+					pushAt(rp,qid,value);
+				}
+			}
+		}
+		for (var i=0;i<rp.length;i++) {
+			var param = '!'+i;
+			query = query.replaceAll(param,rp[i]);
+		}
+	}
 
 	var mimeType = 'application/json';
 	if (format == 'csv') mimeType = 'text/plain'
@@ -74,13 +107,8 @@ app.get('/:owner/:scraper/data.:format', function (req, res) {
 	console.log(options.path+' '+query);
 
 	getResponse(options,function(stateCode,obj) {
-		if (stateCode == 200) {
-			res.send(obj);
-		}
-		else {
-			res.status(stateCode); //.end();
-			res.send(obj);
-		}
+		res.status(stateCode);
+		res.send(obj);
 	});
 
 });

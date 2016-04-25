@@ -17,6 +17,11 @@
       "description": "The API key of the Morph.io scraper",
       "value": ""
     },
+    "FORMAT": {
+      "description": "The format in which to return data, csv, json or atom",
+      "value": "json",
+	  "required": false
+    },
     "QUERY": {
       "description": "To limit to just this query",
       "value": "",
