@@ -1,0 +1,7 @@
+{
+  "name": "Morph Proxy",
+  "description": "A proxy and proxy-generator for the Morph.io API",
+  "repository": "https://github.com/mermade/morph-proxy",
+  "logo": "https://morph-proxy.herokuapp.com/logo.png",
+  "keywords": ["morph", "morph.io", "node", "proxy", "API"]
+}

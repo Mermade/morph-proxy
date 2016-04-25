@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<title>Create Morph.io API Proxy</title>
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+	</head>
+	<body>
+		<h1>Create Morph.io API Proxy</h1>
+		<form id="form1">
+			<table>
+			<tr><td><label>Owner</label></td><td><input id="iOwner"/></td></tr>
+			<tr><td><label>Scraper</label></td><td><input id="iScraper"/></td></tr>
+			<tr><td><label>API Key</label></td><td><input id="iKey" type="password"/></td></tr>
+			<tr><td><label>Query (optional)</label></td><td><input id="iQuery"/></td></tr>
+			</table>
+			<br/>
+			<a id="aCreate" href="https://heroku.com/deploy?template=https://github.com/mermade/morph-proxy">
+			  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
+			</a>
+		</form>
+		<script>
+			$(document).ready(function(){
+				$('#aCreate').click(function(){
+					var owner = $('#iOwner').val();
+					var scraper = $('#iScraper').val();
+					var key = $('#iKey').val();
+					var query = $('#iQuery').val();
+					if (owner && scraper && key) {
+						var link = 'https://heroku.com/deploy?template=https://github.com/mermade/morph-proxy';
+						link += '&env[OWNER]=' + encodeURIComponent(owner);
+						link += '&env[SCRAPER]=' + encodeURIComponent(scraper);
+						link += '&env[KEY]=' + encodeURIComponent(key);
+						if (query) {
+							link += '&env[QUERY]=' + encodeURIComponent(query);
+						}
+						$('#aCreate').attr('href',link);
+					}
+					else {
+						alert('Please complete all mandatory fields');
+						return false;
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
