@@ -6,7 +6,7 @@ It allows you to query your data without revealing your API key.
 
 Both free-form SQL and canned queries are supported. 
 
-It can be deployed to Heroku with one click. 
+It can be deployed to Heroku with one click:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -18,6 +18,6 @@ Once running, you can replace `api.morph.io` with your Heroku app's URL and issu
 
 To define a canned query (which you can think of as a pseudo stored-procedure), create an environment variable in the Heroku dashboard called QUERYnn (where nn is any number) containing your SQL query, using !1 to !9 as replaceable parameters. 
 
-In your front-end application, set the `query` URL parameter to the name if the query you wish to run (e.g. QUERY3) and !1 etc as needed for the replaceable parameter values). 
+In your front-end application, set the `query` URL parameter to the name of the query you wish to run (e.g. QUERY3) and !1 etc as needed for the replaceable parameter values. 
 
 Limited sanitisation of the query parameters is performed, as all morph.io database access via the API is read-only. 
