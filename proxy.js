@@ -67,6 +67,7 @@ app.get('/:owner/:scraper/data.:format', function (req, res) {
 	var scraper = process.env.SCRAPER ? process.env.SCRAPER : req.params.scraper;
 	var format = process.env.FORMAT ? process.env.FORMAT : (req.params.format ? req.params.format : 'json');
 	var key = process.env.KEY ? process.env.KEY : req.query.key;
+	var callback = process.env.CALLBACK ? process.env.CALLBACK : req.query.callback;
 	var query = process.env.QUERY ? process.env.QUERY : (req.query.query ? req.query.query : 'SELECT "true" AS working');
 
 	if (query.startsWith('QUERY')) {
@@ -77,10 +78,9 @@ app.get('/:owner/:scraper/data.:format', function (req, res) {
 				var qid = parseInt(q.replace('!',''),10);
 				if (!isNaN(qid)) {
 					var value = req.query[q];
-					// sanitise
-					value = value.replaceAll('"','\\"');
-					value = value.replaceAll("'","\\'");
-					pushAt(rp,qid,value);
+					value = value.replaceAll('"','\\"'); // sanitise double quotes
+					value = value.replaceAll("'","\\'"); // sanitise single quotes
+					if (qid<=99) pushAt(rp,qid,value);
 				}
 			}
 		}
@@ -89,10 +89,23 @@ app.get('/:owner/:scraper/data.:format', function (req, res) {
 			query = query.replaceAll(param,rp[i]);
 		}
 	}
+	else {
+		if ((query == req.query.query) && (process.env.CANNED_ONLY == "true")) {
+			query = 'SELECT "false" as queryallowed';
+		}
+	}
 
 	var mimeType = 'application/json';
 	if (format == 'csv') mimeType = 'text/plain'
 	else if (format == 'atom') mimeType = 'application/xml+atom';
+
+	var queryParameters = {
+		query: query,
+		key: key
+	};
+	if (typeof callback != 'undefined') {
+		queryParameters.callback = callback;
+	}
 
 	var options = {
 		host: 'api.morph.io',
@@ -102,10 +115,7 @@ app.get('/:owner/:scraper/data.:format', function (req, res) {
 		headers: {
 			'Accept': mimeType
 		},
-		query: {
-			query: query,
-			key: key
-		}
+		query: queryParameters
 	};
 
 	console.log(options.path+' '+query);

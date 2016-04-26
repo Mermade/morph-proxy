@@ -1,24 +1,26 @@
 {
   "name": "Morph Proxy",
-  "description": "A proxy and proxy-generator for the Morph.io API",
+  "description": "A proxy for the Morph.io API",
   "repository": "https://github.com/mermade/morph-proxy",
   "logo": "http://morph-proxy.herokuapp.com/logo.png",
   "keywords": ["morph", "morph.io", "node", "proxy", "API"],
   "env": {
-    "OWNER": {
-      "description": "The owner of the Morph.io scraper",
+    "KEY": {
+      "description": "Your Morph.io API key",
       "value": ""
+    },
+    "OWNER": {
+      "description": "The owner of the Morph.io scraper, blank to allow any",
+      "value": "",
+	  "required": false
     },
     "SCRAPER": {
-      "description": "The name of the Morph.io scraper",
-      "value": ""
-    },
-    "KEY": {
-      "description": "The API key of the Morph.io scraper",
-      "value": ""
+      "description": "The name of the Morph.io scraper, blank to allow any",
+      "value": "",
+	  "required": false
     },
     "FORMAT": {
-      "description": "The format in which to return data, csv, json or atom",
+      "description": "The format in which to return data, csv, json or atom. Leave blank for any",
       "value": "json",
 	  "required": false
     },
@@ -26,6 +28,15 @@
       "description": "To limit to just this query",
       "value": "",
 	  "required": false
+    },
+    "CALLBACK": {
+      "description": "The JSONP callback to run, if required",
+      "value": "",
+	  "required": false
+    },
+    "CANNED_ONLY": {
+      "description": "Set to true to limit to canned queries only, no free-form SQL",
+      "value": "false"
     }
   }
 }
