@@ -1,0 +1,131 @@
+<html>
+	<head>
+		<title>Morph-Proxy</title>
+		<link rel="stylesheet" type="text/css" href="/css/smart-green.css" media="screen">
+
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+		<!-- <script src="/scripts/jquery.colorbox-min.js"></script> -->
+
+		<script src="/dynamic/env.js"></script>
+	<head>
+	<body>
+		<form class="smart-green">
+			<h1>Morph-Proxy</h1>
+			<h2>Configuration and test</h2>
+			<label for="owner">
+				<span>Owner</span><span class="required">&nbsp;*</span>
+				<input id="owner" type="text"/>
+			</label>
+			<label for="scraper">
+				<span>Scraper</span><span class="required">&nbsp;*</span>
+				<input id="scraper" type="text" />
+			</label>
+			<label for="format">
+				<span>Format</span><span class="required">&nbsp;*</span>
+				<select id="format">
+					<option value="json">JSON</option>
+					<option value="atom">ATOM</option>
+					<option value="csv">CSV</option>
+				</select>
+			</label>
+			<label>
+				<span>&nbsp;</span>
+				<input id="btnTest" type="button" class="button" value="Test Connection" />
+			</label>
+			<label for="query">
+				<span>Query</span><span class="required">&nbsp;*</span>
+				<textarea id="query"></textarea>
+			</label>
+			<label>
+				<span>&nbsp;</span>
+				<input id="btnRun" type="button" class="button" value="Run Query" />
+			</label>
+			<label for="response">
+				<span>Response</span>
+				<textarea id="response" disabled="true"></textarea>
+			</label>
+		</form>
+		<script>
+		$(document).ready(function(){
+
+			function validate(query) {
+				var result = true;
+				if ($('#owner').val() == '') {
+					$('#owner').focus();
+					result = false;
+				}
+				else if ($('#scraper').val() == '') {
+					$('#scraper').focus();
+					result = false;
+				}
+				else if ($('#format').val() == '') {
+					$('#format').focus();
+					result = false;
+				}
+				else if ((query) && ($('#query').val() == '')) {
+					$('#query').focus();
+					result = false;
+				}
+				return result;
+			}
+
+			function url(query) {
+				return '/'+$('#owner').val()+'/'+$('#scraper').val()+'/data.'+$('#format').val()+
+					'?query='+encodeURIComponent(query);
+			}
+
+			$('#owner').val(proxyEnv.OWNER);
+			$('#scraper').val(proxyEnv.SCRAPER);
+			$('#format').select(proxyEnv.FORMAT);
+			$('#query').val(proxyEnv.QUERY);
+			$('#response').val('');
+
+			if ($('#owner').val()!='') {
+				$('#owner').attr('disabled',true);
+			}
+			if ($('#scraper').val()!='') {
+				$('#scraper').attr('disabled',true);
+			}
+			if (typeof proxyEnv.FORMAT != 'undefined') {
+				$('#format').attr('disabled',true);
+			}
+			if ($('#query').val()!='') {
+				$('#query').attr('disabled',true);
+			}
+
+			$('#btnTest').click(function(){
+				if (validate(false)) {
+					var query = 'SELECT * FROM sqlite_master';
+					if (!$('#query').attr('disabled')) {
+						$('#query').val(query);
+					}
+					$.ajax(url(query),
+					{
+						success : function(res){
+							$('#response').val(res);
+						}
+					});
+				}
+				else {
+					alert('Please complete all mandatory fields');
+				}
+				return false;
+			});
+			$('#btnRun').click(function(){
+				if (validate(true)) {
+					$.ajax(url($('#query').val()),
+					{
+						success : function(res){
+							$('#response').val(res);
+						}
+					});
+				}
+				else {
+					alert('Please complete all mandatory fields');
+				}
+				return false;
+			});
+		});
+		</script>
+	</body>
+</html>

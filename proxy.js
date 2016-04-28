@@ -44,11 +44,15 @@ function getResponse(options, onResult) {
 	req.end();
 }
 
+app.use("/images",  express.static(__dirname + '/pub/images'));
+app.use("/css",  express.static(__dirname + '/pub/css'));
+app.use("/scripts",  express.static(__dirname + '/pub/scripts'));
+
 app.get('/', function(req, res) {
-	res.redirect('https://github.com/mermade/morph-proxy');
+	res.redirect('/index.html');
 });
 app.get('/*.html', function (req, res) {
-	res.redirect('https://github.com/mermade/morph-proxy');
+	res.sendFile(__dirname+'/pub'+req.path);
 });
 
 app.get('/favicon.ico', function(req, res) {
@@ -57,9 +61,18 @@ app.get('/favicon.ico', function(req, res) {
 app.get('/logo.png', function(req, res) {
 	res.sendFile(__dirname+'/pub/images/logo.png');
 });
-
 app.get('/browserconfig.xml', function(req,res) {
 	res.send('<?xml version="1.0" encoding="utf-8"?><browserconfig><msapplication></msapplication></browserconfig>');
+});
+
+app.get('/dynamic/env.js', function(req,res) {
+	var env = {};
+	for (var i in process.env) {
+		if (i!='KEY') {
+			env[i] = process.env[i];
+		}
+	}
+	res.send('var proxyEnv = '+JSON.stringify(env)+';');
 });
 
 app.get('/:owner/:scraper/data.:format', function (req, res) {
