@@ -32,6 +32,14 @@
 				<span>&nbsp;</span>
 				<input id="btnTest" type="button" class="button" value="Test Connection" />
 			</label>
+			<div id="labCanned">
+				<label for="canned">
+					<span>Canned query</span><span id="spnCannedReq" class="required">&nbsp;*</span>
+					<select id="canned">
+						<!-- <option value="select count(1) from data" selected="false">QUERY01</option> -->
+					</select>
+				</label>
+			</div>
 			<label for="query">
 				<span>Query</span><span class="required">&nbsp;*</span>
 				<textarea id="query"></textarea>
@@ -80,6 +88,29 @@
 			$('#query').val(proxyEnv.QUERY);
 			$('#response').val('');
 
+			if (($('#query').val()!='') || (proxyEnv.CANNED_ONLY)) {
+				$('#query').attr('disabled',true);
+			}
+			else {
+				$('#spnCannedReq').addClass('hidden');
+			}
+
+			var canned = {};
+			numCanned = 0;
+			for (var i in proxyEnv) {
+				if ((i.startsWith('QUERY')) && (i != 'QUERY')) {
+					canned[i] = proxyEnv[i];
+					$('#canned')[0].options.add(new Option(i,canned[i]));
+					if ($('#query').val() == '') {
+						$('#query').val(canned[i]);
+					}
+					numCanned++; // Object.keys() not supported in all browsers
+				}
+			}
+			if (numCanned <= 0) {
+				$('#labCanned').addClass('hidden');
+			}
+
 			if ($('#owner').val()!='') {
 				$('#owner').attr('disabled',true);
 			}
@@ -89,9 +120,10 @@
 			if (typeof proxyEnv.FORMAT != 'undefined') {
 				$('#format').attr('disabled',true);
 			}
-			if ($('#query').val()!='') {
-				$('#query').attr('disabled',true);
-			}
+
+			$('#canned').change(function(){
+				$('#query').val($(this).val());
+			});
 
 			$('#btnTest').click(function(){
 				if (validate(false)) {
@@ -99,10 +131,12 @@
 					if (!$('#query').attr('disabled')) {
 						$('#query').val(query);
 					}
-					$.ajax(url(query),
-					{
+					$.ajax(url(query),{
 						success : function(res){
 							$('#response').val(res);
+						},
+						error : function(res){
+							$('#response').val(JSON.stringify(res,null,2));
 						}
 					});
 				}
@@ -111,12 +145,15 @@
 				}
 				return false;
 			});
+
 			$('#btnRun').click(function(){
 				if (validate(true)) {
-					$.ajax(url($('#query').val()),
-					{
+					$.ajax(url($('#query').val()),{
 						success : function(res){
 							$('#response').val(res);
+						},
+						error : function(res){
+							$('#response').val(JSON.stringify(res,null,2));
 						}
 					});
 				}
