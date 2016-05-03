@@ -219,5 +219,22 @@ var columnTypes = [
 				"cardinality" : "ONE"
 			}
 		]
+	},
+	{
+		"editor": "SELECT",
+		"name": "BOOLEAN",
+		"operators": [
+			{
+				"name": "=",
+				"label": "is",
+				"cardinality": "ONE"
+			}
+		]
 	}
 ];
+
+function enumerate(request, callback) {
+  if (request.columnTypeName == 'BOOLEAN') {
+    callback([{value:'0', label:'False'}, {value:'1', label:'True'}]);
+  }
+}

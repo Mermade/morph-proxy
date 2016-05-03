@@ -46,6 +46,8 @@
 			<input id="btnRun" class="button queryButton" type="button" disabled="true" value="Run Query"></input>
 			<span>&nbsp;</span>
 			<input id="btnGet" class="button queryButton" type="button" disabled="true" value="Get SQL"></input>
+			<span>&nbsp;</span>
+			<input id="btnHide" class="button queryButton hidden" type="button" disabled="true" value="Hide SQL"></input>
 			</div>
 			<div id="divSql" class="hidden">
 				<label>
@@ -78,16 +80,18 @@
 				$('#plsWait').removeClass('hidden');
 				$('#rqb').html(''); // reset
 				$('#rqb').addClass('hidden');
+				$(document).css('cursor','wait');
 				querySql = '';
 				queryArgs = [];
 				$('.queryButton').attr('disabled',true);
 				var query = 'SELECT * FROM sqlite_master WHERE type = "table"';
 				$.ajax(url(query),{
 					success : function(res){
+						$('body').css('cursor','default');
 						$('#plsWait').addClass('hidden');
 						$('#rqb').removeClass('hidden');
 						$('.queryButton').attr('disabled',false);
-						var res = JSON.parse(res);
+						res = JSON.parse(res);
 
 						var tables = [];
 						for (var t=0;t<res.length;t++) {
@@ -107,12 +111,14 @@
 								querySql = sql;
 								queryArgs = args;
 								$('#txtSql').val(sql);
-							}
+							},
+							enumerate:enumerate
 						});
 					},
 					error : function(res){
+						$('body').css('cursor','default');
 						$('#plsWait').addClass('hidden');
-						alert(JSON.stringify(res,null,2));
+						alert(res.status+' '+res.statusText);
 					}
 				});
 			}
@@ -134,10 +140,20 @@
 			});
 
 			$('#btnGet').click(function(){
-				$('#divSql').removeClass('hidden');
+				$('#divSql').removeClass('hidden').focus();
+				$('#btnGet').addClass('hidden');
+				$('#btnHide').removeClass('hidden');
+			});
+
+			$('#btnHide').click(function(){
+				$('#divSql').addClass('hidden');
+				$('#btnGet').removeClass('hidden');
+				$('#btnHide').addClass('hidden');
 			});
 
 			$('#btnRun').click(function(){
+				$('#plsWait').removeClass('hidden');
+				$('body').css('cursor', 'wait');
 				var query = querySql;
 				var args = queryArgs.slice(0); //clone
 				for (var a=0;a<queryArgs.length;a++) {
@@ -149,6 +165,8 @@
 				}
 				$.ajax(url(query),{
 					success : function(res){
+						$('#plsWait').addClass('hidden');
+						$('body').css('cursor', 'auto');
 						res = JSON.parse(res);
 
 						var header = [];
@@ -161,9 +179,13 @@
 						$('#divResults').html('<table id="jsonTable"></table>'); // reset
 						$('#jsonTable').jsonTable({head: header, json : json});
 						$('#jsonTable').jsonTableUpdate({source : res, rowClass : 'resultRow'});
-						$('#jsonTable').flexigrid();
+						$('#jsonTable').flexigrid({addTitleToCell:true,
+							dblClickResize:true,
+							usepager: true,
+							useRp:true});
 					},
 					error : function(res){
+						$("body").css("cursor", "auto");
 						$('#plsWait').addClass('hidden');
 						alert(JSON.stringify(res,null,2));
 					}
