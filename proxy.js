@@ -44,15 +44,26 @@ function getResponse(options, onResult) {
 	req.end();
 }
 
+app.use("/RedQueryBuilder",  express.static(__dirname + '/pub/RedQueryBuilder'));
 app.use("/images",  express.static(__dirname + '/pub/images'));
 app.use("/css",  express.static(__dirname + '/pub/css'));
 app.use("/scripts",  express.static(__dirname + '/pub/scripts'));
 
 app.get('/', function(req, res) {
-	res.redirect('/index.html');
+	if (process.env.LANDING_PAGE != 'false') {
+		res.redirect('/index.html');
+	}
+	else {
+		res.redirect('https://github.com/Mermade/morph-proxy#readme');
+	}
 });
 app.get('/*.html', function (req, res) {
-	res.sendFile(__dirname+'/pub'+req.path);
+	if (process.env.LANDING_PAGE != 'false') {
+		res.sendFile(__dirname+'/pub'+req.path);
+	}
+	else {
+		res.redirect('https://github.com/Mermade/morph-proxy#readme');
+	}
 });
 
 app.get('/favicon.ico', function(req, res) {

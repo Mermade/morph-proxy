@@ -37,6 +37,10 @@
     "CANNED_ONLY": {
       "description": "Set to true to limit to canned queries only, no free-form SQL",
       "value": "false"
+    },
+    "LANDING_PAGE": {
+      "description": "Set to false to disable the test page and redirect to the morph-proxy github project instead",
+      "value": "true"
     }
   }
 }

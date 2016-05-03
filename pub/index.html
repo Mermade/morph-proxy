@@ -4,7 +4,6 @@
 		<link rel="stylesheet" type="text/css" href="/css/smart-green.css" media="screen">
 
 		<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
-		<!-- <script src="/scripts/jquery.colorbox-min.js"></script> -->
 
 		<script src="/dynamic/env.js"></script>
 	<head>
@@ -36,7 +35,6 @@
 				<label for="canned">
 					<span>Canned query</span><span id="spnCannedReq" class="required">&nbsp;*</span>
 					<select id="canned">
-						<!-- <option value="select count(1) from data" selected="false">QUERY01</option> -->
 					</select>
 				</label>
 			</div>
@@ -44,10 +42,12 @@
 				<span>Query</span><span class="required">&nbsp;*</span>
 				<textarea id="query"></textarea>
 			</label>
-			<label>
+			<span>
 				<span>&nbsp;</span>
 				<input id="btnRun" type="button" class="button" value="Run Query" />
-			</label>
+				<span>&nbsp;</span>
+				<a href="/builder.html"><input id="btnBuild" type="button" disabled="true" class="button" value="Query Builder"></a>
+			</span>
 			<label for="response">
 				<span>Response</span>
 				<textarea id="response" disabled="true"></textarea>
@@ -80,6 +80,15 @@
 			function url(query) {
 				return '/'+$('#owner').val()+'/'+$('#scraper').val()+'/data.'+$('#format').val()+
 					'?query='+encodeURIComponent(query);
+			}
+
+			function setBuilderEnabled(){
+				var disabled = true;
+				if (($('#owner').val() != '') && ($('#scraper').val() != '') &&
+					((!proxyEnv.FORMAT) || (proxyEnv.FORMAT == 'json'))) {
+					disabled = false;
+				}
+				$('#btnBuild').attr('disabled',disabled);
 			}
 
 			$('#owner').val(proxyEnv.OWNER);
@@ -120,6 +129,14 @@
 			if (typeof proxyEnv.FORMAT != 'undefined') {
 				$('#format').attr('disabled',true);
 			}
+			setBuilderEnabled();
+
+			$('#owner').change(function(){
+				setBuilderEnabled();
+			});
+			$('#scraper').change(function(){
+				setBuilderEnabled();
+			});
 
 			$('#canned').change(function(){
 				$('#query').val($(this).val());

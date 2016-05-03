@@ -1,0 +1,176 @@
+<html>
+	<head>
+		<title>Morph-Proxy Query Builder</title>
+		<link rel="stylesheet" type="text/css" href="/css/smart-green.css" />
+		<link rel="stylesheet" type="text/css" href="/RedQueryBuilder/gwt/dark/dark.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="/css/flexigrid.css" media="screen" />
+
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+		<script src="/RedQueryBuilder/RedQueryBuilder.nocache.js" type="text/javascript"></script>
+		<script src="/RedQueryBuilder/RedQueryBuilderFactory.nocache.js" type="text/javascript"></script>
+
+		<script src="/dynamic/env.js" type="text/javascript"></script>
+		<script src="/scripts/bobbyTables.js" type="text/javascript"></script>
+		<script src="/scripts/jsonTable.js" type="text/javascript"></script>
+		<script src="/scripts/flexigrid.js" type="text/javascript"></script><!-- datatables, jqgrid, flexigrid -->
+
+	<head>
+	<body>
+		<form class="smart-green">
+			<h1>Morph-Proxy Query Builder</h1>
+			<h3>The query builder only works if the format allows JSON</h3>
+			<div id="parameters" class="hidden">
+				<label for="owner">
+					<span>Owner</span><span class="required">&nbsp;*</span>
+					<input id="owner" type="text"/>
+				</label>
+				<label for="scraper">
+					<span>Scraper</span><span class="required">&nbsp;*</span>
+					<input id="scraper" type="text" />
+				</label>
+				<span>
+					<span>&nbsp;</span>
+					<input id="btnConnect" type="button" class="button" value="Connect" />
+				</span>
+			</div>
+			<div id="plsWait" class="hidden">
+				<label>
+					<h3>Loading, please wait...</h3>
+				</label>
+			</div>
+		</form>
+		<div id="rqb" class="hidden grey-bg" width="75%" align="center">
+		</div>
+		<form class="smart-green">
+			<div>
+			<input id="btnRun" class="button queryButton" type="button" disabled="true" value="Run Query"></input>
+			<span>&nbsp;</span>
+			<input id="btnGet" class="button queryButton" type="button" disabled="true" value="Get SQL"></input>
+			</div>
+			<div id="divSql" class="hidden">
+				<label>
+					<span>SQL Query: </span>
+					<textarea id="txtSql" name="txtSql"></textarea>
+				</label>
+			</div>
+		</form>
+
+		<div id="divResults">
+			<table id="jsonTable">
+			</table>
+		</div>
+
+		<script type="text/javascript">
+		$(document).ready(function(){
+
+			var querySql = '';
+			var queryArgs = [];
+
+			$('#owner').val(proxyEnv.OWNER);
+			$('#scraper').val(proxyEnv.SCRAPER);
+
+			function url(query) {
+				return '/'+$('#owner').val()+'/'+$('#scraper').val()+'/data.json'+
+					'?query='+encodeURIComponent(query);
+			}
+
+			function connect() {
+				$('#plsWait').removeClass('hidden');
+				$('#rqb').html(''); // reset
+				$('#rqb').addClass('hidden');
+				querySql = '';
+				queryArgs = [];
+				$('.queryButton').attr('disabled',true);
+				var query = 'SELECT * FROM sqlite_master WHERE type = "table"';
+				$.ajax(url(query),{
+					success : function(res){
+						$('#plsWait').addClass('hidden');
+						$('#rqb').removeClass('hidden');
+						$('.queryButton').attr('disabled',false);
+						var res = JSON.parse(res);
+
+						var tables = [];
+						for (var t=0;t<res.length;t++) {
+							var table = {};
+							table.name = res[t].name;
+							table.fks = [];
+							table.columns = getColumnsFromCreateStatement(res[t].sql);
+							tables.push(table);
+						}
+
+						RedQueryBuilderFactory.create({
+							meta : {
+								tables : tables,
+								types : columnTypes
+							},
+							onSqlChange : function(sql,args){
+								querySql = sql;
+								queryArgs = args;
+								$('#txtSql').val(sql);
+							}
+						});
+					},
+					error : function(res){
+						$('#plsWait').addClass('hidden');
+						alert(JSON.stringify(res,null,2));
+					}
+				});
+			}
+
+			if ((!proxyEnv.OWNER) || (!proxyEnv.SCRAPER)) {
+				$('#parameters').removeClass('hidden');
+			}
+			else {
+				connect();
+			}
+
+			$('#btnConnect').click(function(){
+				if (($('#owner').val() != '') && ($('#scraper').val() != '')) {
+					connect();
+				}
+				else {
+					alert('Please complete all mandatory fields');
+				}
+			});
+
+			$('#btnGet').click(function(){
+				$('#divSql').removeClass('hidden');
+			});
+
+			$('#btnRun').click(function(){
+				var query = querySql;
+				var args = queryArgs.slice(0); //clone
+				for (var a=0;a<queryArgs.length;a++) {
+					var test = parseFloat(args[a],10);
+					if (isNaN(test)) {
+						args[a] = "'" + args[a] + "'";
+					}
+					query = query.replace('?',args[a]);
+				}
+				$.ajax(url(query),{
+					success : function(res){
+						res = JSON.parse(res);
+
+						var header = [];
+						var json = [];
+						for (var i in res[0]) {
+							header.push(i.toUpperCase());
+							json.push(i);
+						}
+
+						$('#divResults').html('<table id="jsonTable"></table>'); // reset
+						$('#jsonTable').jsonTable({head: header, json : json});
+						$('#jsonTable').jsonTableUpdate({source : res, rowClass : 'resultRow'});
+						$('#jsonTable').flexigrid();
+					},
+					error : function(res){
+						$('#plsWait').addClass('hidden');
+						alert(JSON.stringify(res,null,2));
+					}
+				});
+			});
+
+		});
+		</script>
+	</body>
+</html>
