@@ -69,6 +69,12 @@ input[type="text"]:disabled, input[type="password"]:disabled {
     height:100px;
     padding-top: 10px;
 }
+
+.smart-green .sg-block{
+    height:300px;
+    padding-top: 10px;
+}
+
 .smart-green select {
     background: url('/images/down-arrow.png') no-repeat right, -moz-linear-gradient(top, #FBFBFB 0%, #E9E9E9 100%);
     background: url('/images/down-arrow.png') no-repeat right, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FBFBFB), color-stop(100%,#E9E9E9));

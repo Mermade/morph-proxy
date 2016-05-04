@@ -3,8 +3,10 @@
 		<title>Morph-Proxy</title>
 		<link rel="stylesheet" type="text/css" href="/css/smart-green.css" media="screen">
 		<link rel="stylesheet" type="text/css" href="/css/tabbed-panels.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css" media="screen">
 
 		<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
 
 		<script src="/dynamic/env.js"></script>
 	<head>
@@ -89,17 +91,44 @@
 						<h1>
 						  <label for="tabbedB1">Javascript</label>
 						</h1>
-						<div>
-							<pre>Javascript</pre>
+						<div class="sg-block">
+							<pre><code id="codeJs" class="codeSample"></code></pre>
 						</div>
 					  </section>
 					  <input name="tabbedB" id="tabbedB2" type="radio">
 					  <section>
 						<h1>
-						  <label for="tabbedB2">PHP</label>
+						  <label for="tabbedB2">Curl</label>
 						</h1>
-						<div>
-							<pre>PHP</pre>
+						<div class="sg-block">
+							<pre><code id="codeCurl" class="codeSample"></code></pre>
+						</div>
+					  </section>
+					  <input name="tabbedB" id="tabbedB3" type="radio">
+					  <section>
+						<h1>
+						  <label for="tabbedB3">Ruby</label>
+						</h1>
+						<div class="sg-block">
+							<pre><code id="codeRuby" class="codeSample"></code></pre>
+						</div>
+					  </section>
+					  <input name="tabbedB" id="tabbedB4" type="radio">
+					  <section>
+						<h1>
+						  <label for="tabbedB4">Python</label>
+						</h1>
+						<div class="sg-block">
+							<pre><code id="codePython" class="codeSample"></code></pre>
+						</div>
+					  </section>
+					  <input name="tabbedB" id="tabbedB5" type="radio">
+					  <section>
+						<h1>
+						  <label for="tabbedB5">PHP</label>
+						</h1>
+						<div class="sg-block">
+							<pre><code id="codePHP" class="codeSample"></code></pre>
 						</div>
 					  </section>
 					</div>
@@ -114,6 +143,67 @@
 				<a href="/builder.html"><input id="btnBuild" type="button" disabled="true" class="button" value="Query Builder"></a>
 			</span>
 		</form>
+
+		<div class="hidden">
+		<pre><code id="exampleJs">
+var morph_proxy_url = '{host}/{owner}/{scraper}/data.json';
+var morph_proxy_params = {
+  query: "{query}"
+};
+
+$.ajax({
+  url: morph_proxy_url + '?' + $.param(morph_proxy_params),
+  dataType: 'jsonp',
+  success: function(data) {
+    console.log('received data: ' + JSON.stringify(data));
+  }
+});
+		</code></pre>
+		<pre><code id="exampleCurl">
+curl "{host}/{owner}/{scraper}/data.json?query={escaped}"
+		</code></pre>
+		<pre><code id="exampleRuby">
+# Get data from the morph.io api
+require 'rest-client'
+require 'json'
+
+# We always ask for json because it's the easiest to deal with
+morph_proxy_url = '{host}/{owner}/{scraper}/data.json'
+
+result = RestClient.get morph_proxy_url, params:
+  {
+    query: "{query}"
+  }
+
+p JSON.parse(result)
+		</code></pre>
+		<pre><code id="examplePython">
+# Get data from the morph.io api
+import requests
+
+# We always ask for json because it's the easiest to deal with
+morph_proxy_url = "{host}/{owner}/{scraper}/data.json"
+
+r = requests.get(morph_proxy_url, params={
+  'query': "{query}"
+})
+
+print r.json()
+		</code></pre>
+		<pre><code id="examplePHP">
+&lt;?php
+$morph_proxy_url = "{host}/{owner}/{scraper}/data.json";
+
+$query = "{query}";
+
+$response = file_get_contents($morph_proxy_url.'?query='.urlencode($query));
+$js = json_decode($response,true);
+
+print_r($js);
+?&gt;
+		</code></pre>
+		</div>
+
 		<script>
 		$(document).ready(function(){
 
@@ -136,6 +226,33 @@
 					result = false;
 				}
 				return result;
+			}
+
+			function setCodeSamples() {
+				// reset the examples
+				$('#codeJs').html($('#exampleJs').html());
+				$('#codeCurl').html($('#exampleCurl').html());
+				$('#codeRuby').html($('#exampleRuby').html());
+				$('#codePython').html($('#examplePython').html());
+				$('#codePHP').html($('#examplePHP').html());
+
+				$('.codeSample').each(function(i, block) {
+					var code = $(this).html();
+					code = code.replace('{host}',location.protocol+'//'+location.host);
+					if ($('#owner').val()) {
+						code = code.replace('{owner}',$('#owner').val());
+					}
+					if ($('#scraper').val()) {
+						code = code.replace('{scraper}',$('#scraper').val());
+					}
+					if ($('#query').val()) {
+						code = code.replace('{escaped}',encodeURIComponent($('#query').val()));
+						code = code.replace('{query}',$('#query').val().replace(/"/g,'\\"'));
+					}
+
+					$(this).html(code);
+					hljs.highlightBlock(block);
+				});
 			}
 
 			function url(query) {
@@ -203,18 +320,27 @@
 				$('#query').val($(this).val());
 			});
 
+			$('#tabbed2').change(function(){
+				$('#endpoint').val(location.protocol+'//'+location.host+url($('#query').val()));
+			});
+
+			$('#tabbed4').change(function(){
+				setCodeSamples();
+			});
+
 			$('#btnTest').click(function(){
 				if (validate(false)) {
 					var query = 'SELECT * FROM sqlite_master';
 					if (!$('#query').attr('disabled')) {
 						$('#query').val(query);
 					}
-					$('#endpoint').val(location.protocol+'//'+location.host+url(query));
 					$.ajax(url(query),{
 						success : function(res){
+							$('#tabbed3').prop('checked',true);
 							$('#response').val(res);
 						},
 						error : function(res){
+							$('#tabbed3').prop('checked',true);
 							$('#response').val(JSON.stringify(res,null,2));
 						}
 					});
@@ -227,12 +353,13 @@
 
 			$('#btnRun').click(function(){
 				if (validate(true)) {
-					$('#endpoint').val(location.protocol+'//'+location.host+url($('#query').val()));
 					$.ajax(url($('#query').val()),{
 						success : function(res){
+							$('#tabbed3').prop('checked',true);
 							$('#response').val(res);
 						},
 						error : function(res){
+							$('#tabbed3').prop('checked',true);
 							$('#response').val(JSON.stringify(res,null,2));
 						}
 					});
