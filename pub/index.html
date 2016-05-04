@@ -2,6 +2,7 @@
 	<head>
 		<title>Morph-Proxy</title>
 		<link rel="stylesheet" type="text/css" href="/css/smart-green.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="/css/tabbed-panels.css" media="screen">
 
 		<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
 
@@ -10,7 +11,7 @@
 	<body>
 		<form class="smart-green">
 			<h1>Morph-Proxy</h1>
-			<h2>Configuration and test</h2>
+			<h2>Configuration and test. <a href="https://github.com/Mermade/morph-proxy">GitHub project.</a></h2>
 			<label for="owner">
 				<span>Owner</span><span class="required">&nbsp;*</span>
 				<input id="owner" type="text"/>
@@ -38,20 +39,80 @@
 					</select>
 				</label>
 			</div>
-			<label for="query">
-				<span>Query</span><span class="required">&nbsp;*</span>
-				<textarea id="query"></textarea>
-			</label>
+
+			<div class="tabbed">
+			  <input name="tabbedA" id="tabbed1" type="radio" checked>
+			  <section>
+				<h1>
+				  <label for="tabbed1">Query</label>
+				</h1>
+				<div>
+					<label for="query">
+						<span>Query</span><span class="required">&nbsp;*</span>
+						<textarea id="query"></textarea>
+					</label>
+				</div>
+			  </section>
+			  <input name="tabbedA" id="tabbed2" type="radio">
+			  <section>
+				<h1>
+				  <label for="tabbed2">Endpoint</label>
+				</h1>
+				<div>
+					<label for="endpoint">
+						<span>Endpoint (nb No API KEY variable is required)</span>
+						<textarea id="endpoint" disabled="true"></textarea>
+					</label>
+				</div>
+			  </section>
+			  <input name="tabbedA" id="tabbed3" type="radio">
+			  <section>
+				<h1>
+				  <label for="tabbed3">Response</label>
+				</h1>
+				<div>
+					<label for="response">
+						<span>Response</span>
+						<textarea id="response" disabled="true"></textarea>
+					</label>
+				</div>
+			  </section>
+			  <input name="tabbedA" id="tabbed4" type="radio">
+			  <section>
+				<h1>
+				  <label for="tabbed4">Code Samples</label>
+				</h1>
+				<div>
+					<div class="tabbed">
+					  <input name="tabbedB" id="tabbedB1" type="radio" checked>
+					  <section>
+						<h1>
+						  <label for="tabbedB1">Javascript</label>
+						</h1>
+						<div>
+							<pre>Javascript</pre>
+						</div>
+					  </section>
+					  <input name="tabbedB" id="tabbedB2" type="radio">
+					  <section>
+						<h1>
+						  <label for="tabbedB2">PHP</label>
+						</h1>
+						<div>
+							<pre>PHP</pre>
+						</div>
+					  </section>
+					</div>
+				</div>
+			  </section>
+			</div>
+
 			<span>
 				<span>&nbsp;</span>
 				<input id="btnRun" type="button" class="button" value="Run Query" />
 				<span>&nbsp;</span>
 				<a href="/builder.html"><input id="btnBuild" type="button" disabled="true" class="button" value="Query Builder"></a>
 			</span>
-			<label for="response">
-				<span>Response</span>
-				<textarea id="response" disabled="true"></textarea>
-			</label>
 		</form>
 		<script>
 		$(document).ready(function(){
@@ -148,6 +209,7 @@
 					if (!$('#query').attr('disabled')) {
 						$('#query').val(query);
 					}
+					$('#endpoint').val(location.protocol+'//'+location.host+url(query));
 					$.ajax(url(query),{
 						success : function(res){
 							$('#response').val(res);
@@ -165,6 +227,7 @@
 
 			$('#btnRun').click(function(){
 				if (validate(true)) {
+					$('#endpoint').val(location.protocol+'//'+location.host+url($('#query').val()));
 					$.ajax(url($('#query').val()),{
 						success : function(res){
 							$('#response').val(res);

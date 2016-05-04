@@ -11,7 +11,7 @@
 
 		<script src="/dynamic/env.js" type="text/javascript"></script>
 		<script src="/scripts/bobbyTables.js" type="text/javascript"></script>
-		<script src="/scripts/jsonTable.js" type="text/javascript"></script>
+		<script src="/scripts/jsonTable.js" type="text/javascript"></script><!-- using jsonTable allows us to swap the grid easily -->
 		<script src="/scripts/flexigrid.js" type="text/javascript"></script><!-- datatables, jqgrid, flexigrid -->
 
 	<head>
@@ -48,11 +48,17 @@
 			<input id="btnGet" class="button queryButton" type="button" disabled="true" value="Get SQL"></input>
 			<span>&nbsp;</span>
 			<input id="btnHide" class="button queryButton hidden" type="button" disabled="true" value="Hide SQL"></input>
+			<span>&nbsp;</span>
+			<input id="btnCode" class="button queryButton" type="button" disabled="true" value="Code Samples"></input>
 			</div>
 			<div id="divSql" class="hidden">
+				<label for="endpoint">
+					<span>Endpoint: (nb No API KEY variable is required)</span>
+					<textarea id="endpoint" disabled="true"></textarea>
+				</label>
 				<label>
 					<span>SQL Query: </span>
-					<textarea id="txtSql" name="txtSql"></textarea>
+					<textarea id="txtSql" name="txtSql" disabled="true"></textarea>
 				</label>
 			</div>
 		</form>
@@ -110,7 +116,8 @@
 							onSqlChange : function(sql,args){
 								querySql = sql;
 								queryArgs = args;
-								$('#txtSql').val(sql);
+								$('#txtSql').val(bindParameters()+' LIMIT 15');
+								$('#endpoint').val(location.protocol+'//'+location.host+url('QUERY'));
 							},
 							enumerate:enumerate
 						});
@@ -121,6 +128,19 @@
 						alert(res.status+' '+res.statusText);
 					}
 				});
+			}
+
+			function bindParameters() {
+				var query = querySql;
+				var args = queryArgs.slice(0); //clone
+				for (var a=0;a<queryArgs.length;a++) {
+					var test = parseFloat(args[a],10);
+					if (isNaN(test)) {
+						args[a] = "'" + args[a] + "'";
+					}
+					query = query.replace('?',args[a]);
+				}
+				return query;
 			}
 
 			if ((!proxyEnv.OWNER) || (!proxyEnv.SCRAPER)) {
@@ -154,15 +174,8 @@
 			$('#btnRun').click(function(){
 				$('#plsWait').removeClass('hidden');
 				$('body').css('cursor', 'wait');
-				var query = querySql;
-				var args = queryArgs.slice(0); //clone
-				for (var a=0;a<queryArgs.length;a++) {
-					var test = parseFloat(args[a],10);
-					if (isNaN(test)) {
-						args[a] = "'" + args[a] + "'";
-					}
-					query = query.replace('?',args[a]);
-				}
+				var query = bindParameters();
+				if (query) query += ' LIMIT 15';
 				$.ajax(url(query),{
 					success : function(res){
 						$('#plsWait').addClass('hidden');
