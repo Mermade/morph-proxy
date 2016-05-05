@@ -63,7 +63,7 @@
 				<div>
 					<label for="endpoint">
 						<span>Endpoint (nb No API KEY variable is required)</span>
-						<textarea id="endpoint" disabled="true"></textarea>
+						<div class="sg-sml-block" id="endpoint"></div>
 					</label>
 				</div>
 			  </section>
@@ -129,6 +129,20 @@
 						</h1>
 						<div class="sg-block">
 							<pre><code id="codePHP" class="codeSample"></code></pre>
+						</div>
+					  </section>
+					  <input name="tabbedB" id="tabbedB6" type="radio">
+					  <section>
+						<h1>
+						  <label for="tabbedB6">Credits</label>
+						</h1>
+						<div class="sg-block">
+							Code sample credits:<br/>
+							<ul>
+								<li><a href="https://github.com/mlandauer">Matthew Landauer</a></li>
+							</ul>
+							<br/>
+							<a href="https://github.com/Mermade/morph-proxy/pulls">Pull requests</a> for corrections or additional languages are appreciated.
 						</div>
 					  </section>
 					</div>
@@ -321,7 +335,8 @@ print_r($js);
 			});
 
 			$('#tabbed2').change(function(){
-				$('#endpoint').val(location.protocol+'//'+location.host+url($('#query').val()));
+				var endpoint = location.protocol+'//'+location.host+url($('#query').val());
+				$('#endpoint').html('<br/><a href="'+endpoint+'">'+endpoint+'</a>');
 			});
 
 			$('#tabbed4').change(function(){

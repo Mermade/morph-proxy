@@ -27,6 +27,9 @@
     border-bottom:1px solid #89AF4C;
 }
 
+.smart-green a{
+	color: #9DC45F;
+}
 .smart-green h2>a {
     color: #666;
 }
@@ -67,6 +70,16 @@ input[type="text"]:disabled, input[type="password"]:disabled {
 
 .smart-green textarea{
     height:100px;
+    padding-top: 10px;
+}
+
+.smart-green .sg-sml-block{
+    height:100px;
+    padding-top: 10px;
+}
+
+.smart-green .sg-med-block{
+    height:200px;
     padding-top: 10px;
 }
 
