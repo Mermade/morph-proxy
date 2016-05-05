@@ -115,6 +115,11 @@ input[type="text"]:disabled, input[type="password"]:disabled {
 .smart-green .button:disabled {
     background-color:#808080;
 }
+.smart-green .sg-button-box {
+    margin-top: 10px;
+    color: #5E5E5E;
+    margin-bottom: 10px;
+}
 
 .smart-green .required {
     color:red;

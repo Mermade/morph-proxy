@@ -1,15 +1,15 @@
 <html>
 	<head>
 		<title>Morph-Proxy</title>
-		<link rel="stylesheet" type="text/css" href="/css/smart-green.css" media="screen">
-		<link rel="stylesheet" type="text/css" href="/css/tabbed-panels.css" media="screen">
-		<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css" media="screen">
+		<link rel="stylesheet" type="text/css" href="/css/smart-green.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="/css/tabbed-panels.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/default.min.css" media="screen" />
 
 		<script src="https://code.jquery.com/jquery-1.12.3.min.js" integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ=" crossorigin="anonymous"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
 
 		<script src="/dynamic/env.js"></script>
-	<head>
+	</head>
 	<body>
 		<form class="smart-green">
 			<h1>Morph-Proxy</h1>
@@ -30,10 +30,14 @@
 					<option value="csv">CSV</option>
 				</select>
 			</label>
-			<label>
-				<span>&nbsp;</span>
+			<div class="sg-button-box">
 				<input id="btnTest" type="button" class="button" value="Test Connection" />
-			</label>
+				<span>&nbsp;</span>
+				<input id="btnRun" type="button" class="button" value="Run Query" />
+				<span>&nbsp;</span>
+				<a href="/builder.html"><input id="btnBuild" type="button" disabled="true" class="button" value="Query Builder" /></a>
+				<span>&nbsp;</span>
+			</div>
 			<div id="labCanned">
 				<label for="canned">
 					<span>Canned query</span><span id="spnCannedReq" class="required">&nbsp;*</span>
@@ -43,7 +47,7 @@
 			</div>
 
 			<div class="tabbed">
-			  <input name="tabbedA" id="tabbed1" type="radio" checked>
+			  <input name="tabbedA" id="tabbed1" type="radio" checked />
 			  <section>
 				<h1>
 				  <label for="tabbed1">Query</label>
@@ -55,7 +59,7 @@
 					</label>
 				</div>
 			  </section>
-			  <input name="tabbedA" id="tabbed2" type="radio">
+			  <input name="tabbedA" id="tabbed2" type="radio" />
 			  <section>
 				<h1>
 				  <label for="tabbed2">Endpoint</label>
@@ -67,7 +71,7 @@
 					</label>
 				</div>
 			  </section>
-			  <input name="tabbedA" id="tabbed3" type="radio">
+			  <input name="tabbedA" id="tabbed3" type="radio" />
 			  <section>
 				<h1>
 				  <label for="tabbed3">Response</label>
@@ -79,14 +83,14 @@
 					</label>
 				</div>
 			  </section>
-			  <input name="tabbedA" id="tabbed4" type="radio">
+			  <input name="tabbedA" id="tabbed4" type="radio" />
 			  <section>
 				<h1>
 				  <label for="tabbed4">Code Samples</label>
 				</h1>
 				<div>
 					<div class="tabbed">
-					  <input name="tabbedB" id="tabbedB1" type="radio" checked>
+					  <input name="tabbedB" id="tabbedB1" type="radio" checked />
 					  <section>
 						<h1>
 						  <label for="tabbedB1">Javascript</label>
@@ -95,7 +99,7 @@
 							<pre><code id="codeJs" class="codeSample"></code></pre>
 						</div>
 					  </section>
-					  <input name="tabbedB" id="tabbedB2" type="radio">
+					  <input name="tabbedB" id="tabbedB2" type="radio" />
 					  <section>
 						<h1>
 						  <label for="tabbedB2">Curl</label>
@@ -104,7 +108,7 @@
 							<pre><code id="codeCurl" class="codeSample"></code></pre>
 						</div>
 					  </section>
-					  <input name="tabbedB" id="tabbedB3" type="radio">
+					  <input name="tabbedB" id="tabbedB3" type="radio" />
 					  <section>
 						<h1>
 						  <label for="tabbedB3">Ruby</label>
@@ -113,7 +117,7 @@
 							<pre><code id="codeRuby" class="codeSample"></code></pre>
 						</div>
 					  </section>
-					  <input name="tabbedB" id="tabbedB4" type="radio">
+					  <input name="tabbedB" id="tabbedB4" type="radio" />
 					  <section>
 						<h1>
 						  <label for="tabbedB4">Python</label>
@@ -122,7 +126,7 @@
 							<pre><code id="codePython" class="codeSample"></code></pre>
 						</div>
 					  </section>
-					  <input name="tabbedB" id="tabbedB5" type="radio">
+					  <input name="tabbedB" id="tabbedB5" type="radio" />
 					  <section>
 						<h1>
 						  <label for="tabbedB5">PHP</label>
@@ -131,7 +135,7 @@
 							<pre><code id="codePHP" class="codeSample"></code></pre>
 						</div>
 					  </section>
-					  <input name="tabbedB" id="tabbedB6" type="radio">
+					  <input name="tabbedB" id="tabbedB6" type="radio" />
 					  <section>
 						<h1>
 						  <label for="tabbedB6">Credits</label>
@@ -142,19 +146,17 @@
 								<li><a href="https://github.com/mlandauer">Matthew Landauer</a></li>
 							</ul>
 							<br/>
+							Please see the <a href="https://morph.io/documentation/api">Morph.io documentation</a> for more details on running these code samples.
+							<br/>
 							<a href="https://github.com/Mermade/morph-proxy/pulls">Pull requests</a> for corrections or additional languages are appreciated.
 						</div>
 					  </section>
 					</div>
 				</div>
-			  </section>
 			</div>
 
 			<span>
 				<span>&nbsp;</span>
-				<input id="btnRun" type="button" class="button" value="Run Query" />
-				<span>&nbsp;</span>
-				<a href="/builder.html"><input id="btnBuild" type="button" disabled="true" class="button" value="Query Builder"></a>
 			</span>
 		</form>
 
